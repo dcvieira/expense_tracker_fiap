@@ -1,7 +1,7 @@
 import 'package:expense_tracker/repository/categoria_repository.dart';
 import 'package:flutter/material.dart';
 
-import '../components/categioria_Item.dart';
+import '../components/categoria_Item.dart';
 
 class CategoriasPage extends StatefulWidget {
   const CategoriasPage({super.key});
