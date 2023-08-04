@@ -6,7 +6,7 @@ class Banco {
   const Banco(this.id, this.nome, this.logo);
 }
 
-const Map<String, Banco> banksMap = {
+const Map<String, Banco> bancosMap = {
   "bb": Banco('bb', 'Banco do Brasil', 'bb.png'),
   "bmg": Banco('bmg', 'Bmg', 'bmg.png'),
   "bradesco": Banco('bradesco', 'Bradesco', 'bradesco.png'),
