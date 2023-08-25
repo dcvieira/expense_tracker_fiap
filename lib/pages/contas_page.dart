@@ -2,7 +2,7 @@ import 'package:expense_tracker/components/conta_item.dart';
 import 'package:expense_tracker/models/conta.dart';
 import 'package:flutter/material.dart';
 
-import '../repository/contas_repositrory.dart';
+import '../repository/contas_repository.dart';
 
 class ContasPage extends StatefulWidget {
   const ContasPage({super.key});
@@ -12,17 +12,41 @@ class ContasPage extends StatefulWidget {
 }
 
 class _ContasPageState extends State<ContasPage> {
-  final contas = ContasRepository().listarContas();
+  final contasFuture = ContasRepository().listarContas();
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      itemCount: contas.length,
-      itemBuilder: (context, index) {
-        final conta = contas[index];
-        return ContaItem(conta: conta);
-      },
-      separatorBuilder: (context, index) => const Divider(),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Contas'),
+      ),
+      body: FutureBuilder<List<Conta>>(
+          future: contasFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return const Center(
+                child: Text("Erro ao carregar contas"),
+              );
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text("Nenhuma conta encontrada"),
+              );
+            } else {
+              final contas = snapshot.data!;
+              return ListView.separated(
+                itemCount: contas.length,
+                itemBuilder: (context, index) {
+                  final conta = contas[index];
+                  return ContaItem(conta: conta);
+                },
+                separatorBuilder: (context, index) => const Divider(),
+              );
+            }
+          }),
     );
   }
 }

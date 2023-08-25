@@ -14,11 +14,11 @@ class TransacoesPage extends StatefulWidget {
 
 class _TransacoesPageState extends State<TransacoesPage> {
   final transacoesRepo = TransacoesReepository();
-  late List<Transacao> transacoes;
+  late Future<List<Transacao>> futureTransacoes;
 
   @override
   void initState() {
-    transacoes = transacoesRepo.listarTransacoes();
+    futureTransacoes = transacoesRepo.listarTransacoes();
     super.initState();
   }
 
@@ -36,7 +36,7 @@ class _TransacoesPageState extends State<TransacoesPage> {
                     child: const Text('Todas'),
                     onTap: () {
                       setState(() {
-                        transacoes = transacoesRepo.listarTransacoes();
+                        futureTransacoes = transacoesRepo.listarTransacoes();
                       });
                     },
                   ),
@@ -44,12 +44,8 @@ class _TransacoesPageState extends State<TransacoesPage> {
                     child: const Text('Receitas'),
                     onTap: () {
                       setState(() {
-                        transacoes = transacoesRepo
-                            .listarTransacoes()
-                            .where((transacao) =>
-                                transacao.tipoTransacao ==
-                                TipoTransacao.receita)
-                            .toList();
+                        futureTransacoes = transacoesRepo.listarTransacoes(
+                            tipoTransacao: TipoTransacao.receita);
                       });
                     },
                   ),
@@ -57,12 +53,8 @@ class _TransacoesPageState extends State<TransacoesPage> {
                     child: const Text('Despesas'),
                     onTap: () {
                       setState(() {
-                        transacoes = transacoesRepo
-                            .listarTransacoes()
-                            .where((transacao) =>
-                                transacao.tipoTransacao ==
-                                TipoTransacao.despesa)
-                            .toList();
+                        futureTransacoes = transacoesRepo.listarTransacoes(
+                            tipoTransacao: TipoTransacao.despesa);
                       });
                     },
                   ),
@@ -71,21 +63,40 @@ class _TransacoesPageState extends State<TransacoesPage> {
             ),
           ],
         ),
-        body: ListView.separated(
-          itemCount: transacoes.length,
-          itemBuilder: (context, index) {
-            final transacao = transacoes[index];
-            return TransacaoItem(
-              transacao: transacao,
-              onTap: () {
-                Navigator.pushNamed(context, '/transacao-detalhes',
-                    arguments: transacao);
-              },
-            );
-          },
-          separatorBuilder: (context, index) {
-            return const Divider();
-          },
-        ));
+        body: FutureBuilder<List<Transacao>>(
+            future: futureTransacoes,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasError) {
+                return const Center(
+                  child: Text("Erro ao carregar contas"),
+                );
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(
+                  child: Text("Nenhuma conta encontrada"),
+                );
+              } else {
+                final transacoes = snapshot.data!;
+                return ListView.separated(
+                  itemCount: transacoes.length,
+                  itemBuilder: (context, index) {
+                    final transacao = transacoes[index];
+                    return TransacaoItem(
+                      transacao: transacao,
+                      onTap: () {
+                        Navigator.pushNamed(context, '/transacao-detalhes',
+                            arguments: transacao);
+                      },
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const Divider();
+                  },
+                );
+              }
+            }));
   }
 }
