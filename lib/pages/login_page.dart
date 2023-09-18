@@ -1,3 +1,4 @@
+import 'package:expense_tracker/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -8,6 +9,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _key = GlobalKey<FormState>();
+
+  final emailController = TextEditingController();
+  final senhaController = TextEditingController();
+
+  bool obscureText = true;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -15,21 +23,24 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Colors.white,
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Center(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildBemVindo(),
-                  const SizedBox(height: 20),
-                  _buildEmail(),
-                  const SizedBox(height: 20),
-                  _buildSenha(),
-                  const SizedBox(height: 10),
-                  _buildButton(),
-                  const SizedBox(height: 10),
-                  _buildRegistrar(),
-                ]),
+          child: Form(
+            key: _key,
+            child: Center(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildBemVindo(),
+                    const SizedBox(height: 20),
+                    _buildEmail(),
+                    const SizedBox(height: 20),
+                    _buildSenha(),
+                    const SizedBox(height: 10),
+                    _buildButton(),
+                    const SizedBox(height: 10),
+                    _buildRegistrar(),
+                  ]),
+            ),
           ),
         ),
       ),
@@ -49,6 +60,15 @@ class _LoginPageState extends State<LoginPage> {
 
   TextFormField _buildEmail() {
     return TextFormField(
+      controller: emailController,
+      validator: (String? email) {
+        if (email == null || email.isEmpty) {
+          return "Por favor, digite seu e-mail";
+        } else if (!validarEmail(email)) {
+          return "Por favor, digite um e-mail válido";
+        }
+        return null;
+      },
       decoration: const InputDecoration(
         border: OutlineInputBorder(),
         hintText: "Digite seu e-mail",
@@ -59,12 +79,30 @@ class _LoginPageState extends State<LoginPage> {
 
   TextFormField _buildSenha() {
     return TextFormField(
-      obscureText: true,
-      decoration: const InputDecoration(
+      controller: senhaController,
+      validator: (senha) {
+        if (senha == null || senha.isEmpty) {
+          return "Por favor, digite sua senha";
+        } else if (senha.length < 6) {
+          return "A senha deve ter pelo menos 6 caracteres";
+        }
+        return null;
+      },
+      obscureText: obscureText,
+      decoration: InputDecoration(
         border: OutlineInputBorder(),
         hintText: "Digite sua senha",
         prefixIcon: Icon(Icons.lock_outline_rounded),
-        suffixIcon: Icon(Icons.visibility_outlined),
+        suffixIcon: IconButton(
+          icon: obscureText
+              ? Icon(Icons.visibility_outlined)
+              : Icon(Icons.visibility_off_outlined),
+          onPressed: () {
+            setState(() {
+              obscureText = !obscureText;
+            });
+          },
+        ),
       ),
     );
     // Icone para ocultar a senha visibility_off_outlined
@@ -84,7 +122,9 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildRegistrar() {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.pushReplacementNamed(context, "/registrar");
+      },
       child: RichText(
           text: TextSpan(children: <InlineSpan>[
             TextSpan(
@@ -124,5 +164,16 @@ class _LoginPageState extends State<LoginPage> {
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
-  void onTapBtnSignUp() {}
+  void onTapBtnSignUp() {
+    if (_key.currentState!.validate()) {
+      final repo = AuthRepository();
+      repo.login(emailController.text, senhaController.text).then((value) {
+        if (value) {
+          Navigator.pushReplacementNamed(context, "/home");
+        } else {
+          _exibirMensagem("E-mail ou senha inválidos");
+        }
+      });
+    }
+  }
 }
