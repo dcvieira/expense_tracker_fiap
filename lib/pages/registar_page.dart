@@ -136,7 +136,7 @@ class _RegistrarPageState extends State<RegistrarPage> {
   Widget _buildRegistrar() {
     return GestureDetector(
       onTap: () {
-        Navigator.pushReplacementNamed(context, "/");
+        Navigator.pushReplacementNamed(context, "/login");
       },
       child: RichText(
           text: TextSpan(children: <InlineSpan>[
