@@ -6,8 +6,14 @@ import 'package:expense_tracker/pages/transacao_cadastro_page.dart';
 import 'package:expense_tracker/pages/transacao_detalhes_page.dart';
 
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+void main() async {
+  await Supabase.initialize(
+    url: 'https://atlqjgxevyaykidkpkoc.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0bHFqZ3hldnlheWtpZGtwa29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTU2OTM0MzQsImV4cCI6MjAxMTI2OTQzNH0.ieSdmr1N98IZrVRuftLmEmzu59QEHYetmhXoGzBFIEE',
+  );
   runApp(const MyApp());
 }
 

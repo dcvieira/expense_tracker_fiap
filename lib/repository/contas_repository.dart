@@ -1,33 +1,22 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../models/conta.dart';
 
 class ContasRepository {
   Future<List<Conta>> listarContas() async {
-    await Future.delayed(const Duration(seconds: 5));
-    return [
-      Conta(
-        id: '1',
-        bancoId: 'bb',
-        descricao: 'Conta Corrente',
-        tipoConta: TipoConta.contaCorrente,
-      ),
-      Conta(
-        id: '2',
-        bancoId: 'nubank',
-        descricao: 'Conta Digital',
-        tipoConta: TipoConta.contaCorrente,
-      ),
-      Conta(
-        id: '1',
-        bancoId: 'caixa',
-        descricao: 'Conta Pupança',
-        tipoConta: TipoConta.contaPoupanca,
-      ),
-      Conta(
-        id: '1',
-        bancoId: 'c6bank',
-        descricao: 'Conta Investimento',
-        tipoConta: TipoConta.contaInvestimento,
-      )
-    ];
+    final supabase = Supabase.instance.client;
+    final data =
+        await supabase.from('contas').select<List<Map<String, dynamic>>>();
+
+    final contas = data
+        .map((e) => Conta(
+              id: e['id'],
+              descricao: e['descricao'],
+              tipoConta: TipoConta.values[e['tipo_conta']],
+              bancoId: e['banco'],
+            ))
+        .toList();
+
+    return contas;
   }
 }

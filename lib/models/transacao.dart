@@ -3,7 +3,7 @@ import 'package:expense_tracker/models/conta.dart';
 import 'package:expense_tracker/models/tipo_transacao.dart';
 
 class Transacao {
-  String id;
+  int id;
   String descricao;
   TipoTransacao tipoTransacao;
   double valor;
