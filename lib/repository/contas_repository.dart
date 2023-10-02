@@ -8,14 +8,7 @@ class ContasRepository {
     final data =
         await supabase.from('contas').select<List<Map<String, dynamic>>>();
 
-    final contas = data
-        .map((e) => Conta(
-              id: e['id'],
-              descricao: e['descricao'],
-              tipoConta: TipoConta.values[e['tipo_conta']],
-              bancoId: e['banco'],
-            ))
-        .toList();
+    final contas = data.map((e) => Conta.fromMap(e)).toList();
 
     return contas;
   }

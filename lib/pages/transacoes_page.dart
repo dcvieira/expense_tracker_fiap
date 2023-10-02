@@ -1,5 +1,8 @@
+import 'package:expense_tracker/pages/transacao_cadastro_page.dart';
 import 'package:expense_tracker/repository/transacoes_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../components/transacao_item.dart';
 import '../models/tipo_transacao.dart';
@@ -15,10 +18,12 @@ class TransacoesPage extends StatefulWidget {
 class _TransacoesPageState extends State<TransacoesPage> {
   final transacoesRepo = TransacoesReepository();
   late Future<List<Transacao>> futureTransacoes;
+  User? user;
 
   @override
   void initState() {
-    futureTransacoes = transacoesRepo.listarTransacoes();
+    user = Supabase.instance.client.auth.currentUser;
+    futureTransacoes = transacoesRepo.listarTransacoes(userId: user?.id ?? '');
     super.initState();
   }
 
@@ -36,7 +41,8 @@ class _TransacoesPageState extends State<TransacoesPage> {
                   child: const Text('Todas'),
                   onTap: () {
                     setState(() {
-                      futureTransacoes = transacoesRepo.listarTransacoes();
+                      futureTransacoes = transacoesRepo.listarTransacoes(
+                          userId: user?.id ?? '');
                     });
                   },
                 ),
@@ -45,6 +51,7 @@ class _TransacoesPageState extends State<TransacoesPage> {
                   onTap: () {
                     setState(() {
                       futureTransacoes = transacoesRepo.listarTransacoes(
+                          userId: user?.id ?? '',
                           tipoTransacao: TipoTransacao.receita);
                     });
                   },
@@ -54,6 +61,7 @@ class _TransacoesPageState extends State<TransacoesPage> {
                   onTap: () {
                     setState(() {
                       futureTransacoes = transacoesRepo.listarTransacoes(
+                          userId: user?.id ?? '',
                           tipoTransacao: TipoTransacao.despesa);
                     });
                   },
@@ -72,11 +80,11 @@ class _TransacoesPageState extends State<TransacoesPage> {
             );
           } else if (snapshot.hasError) {
             return const Center(
-              child: Text("Erro ao carregar contas"),
+              child: Text("Erro ao carregar as transações"),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(
-              child: Text("Nenhuma conta encontrada"),
+              child: Text("Nenhuma transação cadastrada"),
             );
           } else {
             final transacoes = snapshot.data!;
@@ -84,12 +92,51 @@ class _TransacoesPageState extends State<TransacoesPage> {
               itemCount: transacoes.length,
               itemBuilder: (context, index) {
                 final transacao = transacoes[index];
-                return TransacaoItem(
-                  transacao: transacao,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/transacao-detalhes',
-                        arguments: transacao);
-                  },
+                return Slidable(
+                  endActionPane: ActionPane(
+                    motion: const ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (context) async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TransacaoCadastroPage(
+                                transacaoParaEdicao: transacao,
+                              ),
+                            ),
+                          ) as bool?;
+
+                          if (result == true) {
+                            setState(() {
+                              futureTransacoes =
+                                  transacoesRepo.listarTransacoes(
+                                userId: user?.id ?? '',
+                              );
+                            });
+                          }
+                        },
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        icon: Icons.edit,
+                        label: 'Editar',
+                      ),
+                      SlidableAction(
+                        onPressed: (context) {},
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        icon: Icons.delete,
+                        label: 'Remover',
+                      ),
+                    ],
+                  ),
+                  child: TransacaoItem(
+                    transacao: transacao,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/transacao-detalhes',
+                          arguments: transacao);
+                    },
+                  ),
                 );
               },
               separatorBuilder: (context, index) {
@@ -101,8 +148,18 @@ class _TransacoesPageState extends State<TransacoesPage> {
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: "transacao-cadastro",
-        onPressed: () {
-          Navigator.pushNamed(context, '/transacao-cadastro');
+        onPressed: () async {
+          final result =
+              await Navigator.pushNamed(context, '/transacao-cadastro')
+                  as bool?;
+
+          if (result == true) {
+            setState(() {
+              futureTransacoes = transacoesRepo.listarTransacoes(
+                userId: user?.id ?? '',
+              );
+            });
+          }
         },
         child: const Icon(Icons.add),
       ),

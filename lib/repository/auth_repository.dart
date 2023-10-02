@@ -1,22 +1,13 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 class AuthRepository {
-  Future<bool> login(String email, String senha) async {
-    await Future.delayed(Duration(seconds: 2));
-
-    if (email.toLowerCase() != 'email@email.com' ||
-        senha.toLowerCase() != '123456') {
-      return false;
-    }
-
-    return true;
+  Future login(String email, String senha) async {
+    final supabase = Supabase.instance.client;
+    await supabase.auth.signInWithPassword(password: senha, email: email);
   }
 
-  Future<bool> registrar(String email, String senha) async {
-    await Future.delayed(Duration(seconds: 2));
-
-    if (email.toLowerCase() == "email@email.com") {
-      return false;
-    }
-
-    return true;
+  Future registrar(String email, String senha) async {
+    final supabase = Supabase.instance.client;
+    await supabase.auth.signUp(password: senha, email: email);
   }
 }

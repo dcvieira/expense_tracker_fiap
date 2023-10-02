@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/categoria.dart';
@@ -13,13 +11,9 @@ class CategoriaRepository {
         await supabase.from('categorias').select<List<Map<String, dynamic>>>();
 
     final categorias = data
-        .map((e) => Categoria(
-              id: e['id'],
-              descricao: e['descricao'],
-              tipoTransacao: TipoTransacao.values[e['tipo_transacao']],
-              icone: IoniconsData(e['icone']),
-              cor: Color(e['cor']),
-            ))
+        .map((map) => Categoria.fromMap(map))
+        .where((cat) =>
+            tipoTransacao == null || cat.tipoTransacao == tipoTransacao)
         .toList();
 
     return categorias;

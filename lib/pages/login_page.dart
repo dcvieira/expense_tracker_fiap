@@ -1,5 +1,6 @@
 import 'package:expense_tracker/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -167,11 +168,14 @@ class _LoginPageState extends State<LoginPage> {
   void onTapBtnSignUp() {
     if (_key.currentState!.validate()) {
       final repo = AuthRepository();
-      repo.login(emailController.text, senhaController.text).then((value) {
-        if (value) {
-          Navigator.pushReplacementNamed(context, "/home");
+
+      repo.login(emailController.text, senhaController.text).then((_) {
+        Navigator.pushReplacementNamed(context, "/");
+      }).catchError((e) {
+        if (e is AuthException) {
+          _exibirMensagem("Falha na autenticação: ${e.message}");
         } else {
-          _exibirMensagem("E-mail ou senha inválidos");
+          _exibirMensagem("Ocorreu um erro inesperado: ${e.toString()}");
         }
       });
     }
