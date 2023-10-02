@@ -122,7 +122,13 @@ class _TransacoesPageState extends State<TransacoesPage> {
                         label: 'Editar',
                       ),
                       SlidableAction(
-                        onPressed: (context) {},
+                        onPressed: (context) async {
+                          await transacoesRepo.excluirTransacao(transacao.id);
+
+                          setState(() {
+                            transacoes.removeAt(index);
+                          });
+                        },
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
                         icon: Icons.delete,

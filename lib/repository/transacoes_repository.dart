@@ -59,4 +59,10 @@ class TransacoesReepository {
       'conta_id': transacao.conta.id,
     }).match({'id': transacao.id});
   }
+
+  Future excluirTransacao(int id) async {
+    final supabase = Supabase.instance.client;
+
+    await supabase.from('transacoes').delete().match({'id': id});
+  }
 }
