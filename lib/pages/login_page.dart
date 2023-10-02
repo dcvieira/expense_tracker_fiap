@@ -6,7 +6,7 @@ class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -91,13 +91,13 @@ class _LoginPageState extends State<LoginPage> {
       },
       obscureText: obscureText,
       decoration: InputDecoration(
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
         hintText: "Digite sua senha",
-        prefixIcon: Icon(Icons.lock_outline_rounded),
+        prefixIcon: const Icon(Icons.lock_outline_rounded),
         suffixIcon: IconButton(
           icon: obscureText
-              ? Icon(Icons.visibility_outlined)
-              : Icon(Icons.visibility_off_outlined),
+              ? const Icon(Icons.visibility_outlined)
+              : const Icon(Icons.visibility_off_outlined),
           onPressed: () {
             setState(() {
               obscureText = !obscureText;

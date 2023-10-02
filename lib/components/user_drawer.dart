@@ -26,7 +26,7 @@ class _UserDrawerState extends State<UserDrawer> {
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-            decoration: const BoxDecoration(color: const Color(0xff764abc)),
+            decoration: const BoxDecoration(color: Color(0xff764abc)),
             accountName: const Text(
               "Bem-vindo!",
               style: TextStyle(

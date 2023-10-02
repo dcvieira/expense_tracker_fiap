@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:expense_tracker/components/user_drawer.dart';
 import 'package:expense_tracker/pages/categorias_page.dart';
 import 'package:expense_tracker/pages/contas_page.dart';
 import 'package:expense_tracker/pages/dashboard_page.dart';

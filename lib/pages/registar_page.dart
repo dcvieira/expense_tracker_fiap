@@ -6,7 +6,7 @@ class RegistrarPage extends StatefulWidget {
   const RegistrarPage({Key? key}) : super(key: key);
 
   @override
-  _RegistrarPageState createState() => _RegistrarPageState();
+  State<RegistrarPage> createState() => _RegistrarPageState();
 }
 
 class _RegistrarPageState extends State<RegistrarPage> {
@@ -110,6 +110,7 @@ class _RegistrarPageState extends State<RegistrarPage> {
         if (senha != senhaController.text) {
           return "As senhas não coincidem";
         }
+        return null;
       },
       obscureText: true,
       decoration: const InputDecoration(

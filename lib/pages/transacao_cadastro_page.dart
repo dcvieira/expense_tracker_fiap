@@ -17,7 +17,7 @@ import '../models/conta.dart';
 class TransacaoCadastroPage extends StatefulWidget {
   final Transacao? transacaoParaEdicao;
 
-  TransacaoCadastroPage({super.key, this.transacaoParaEdicao});
+  const TransacaoCadastroPage({super.key, this.transacaoParaEdicao});
 
   @override
   State<TransacaoCadastroPage> createState() => _TransacaoCadastroPageState();
