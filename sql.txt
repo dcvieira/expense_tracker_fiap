@@ -8,6 +8,16 @@ create table categorias (
 );
 
 
+
+
+create table contas (
+  id bigint generated always as identity primary key,
+  descricao text not null,
+  tipo_conta integer not null,
+  banco text,
+  ativo boolean default true
+);
+
 create table
   transacoes (
     id bigint generated always as identity primary key,
@@ -21,14 +31,6 @@ create table
     detalhes text,
     ativo boolean default true
   );
-
-create table contas (
-  id bigint generated always as identity primary key,
-  descricao text not null,
-  tipo_conta integer not null,
-  banco text,
-  ativo boolean default true
-);
 
 
 insert into contas 
